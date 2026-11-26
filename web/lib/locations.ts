@@ -49,9 +49,6 @@ export const AREAS = [
 /** Everything, de-duplicated, in the order: cities, states, neighbourhoods. */
 export const NIGERIAN_LOCATIONS: string[] = Array.from(new Set([...CITIES, ...STATES, ...AREAS]));
 
-/** Shortcut chips under the search box. */
-export const POPULAR = ["Lagos", "Abuja", "Port Harcourt", "Ibadan", "Kano", "Enugu", "Benin City", "Calabar"];
-
 /**
  * True when every word of the query appears somewhere in the listing text. This lets
  * "Lekki, Lagos" match a listing in "Lekki Phase 1, Lagos", and "Abuja" match "Wuse 2, Abuja".
