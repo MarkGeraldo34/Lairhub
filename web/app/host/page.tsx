@@ -8,6 +8,7 @@ import PendingBanner from "@/components/PendingBanner";
 import { useBookings, useListings } from "@/lib/hooks";
 import { BOOKED, STATUS } from "@/lib/contract";
 import { formatNight, formatTime, shortAddr } from "@/lib/format";
+import { NIGERIAN_LOCATIONS } from "@/lib/locations";
 
 function parsePrice(v: string): bigint | null {
   try {
@@ -47,7 +48,18 @@ export default function Host() {
         </label>
         <label>
           Area <span className="muted small">(neighbourhood only — never your street address)</span>
-          <input value={area} onChange={(e) => setArea(e.target.value)} placeholder="Lekki Phase 1, Lagos" />
+          <input
+            value={area}
+            onChange={(e) => setArea(e.target.value)}
+            placeholder="Lekki Phase 1, Lagos"
+            list="ng-locations-host"
+            autoComplete="off"
+          />
+          <datalist id="ng-locations-host">
+            {NIGERIAN_LOCATIONS.map((loc) => (
+              <option key={loc} value={loc} />
+            ))}
+          </datalist>
         </label>
         <label>
           Price per night (QIE)
