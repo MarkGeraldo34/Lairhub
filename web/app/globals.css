@@ -49,6 +49,10 @@ label { display: block; font-size: 0.9rem; margin-bottom: 14px; }
 .hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); margin: 0 0 12px; line-height: 1.05; background: linear-gradient(90deg, #fff, var(--lamp)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero p { max-width: 560px; color: var(--muted); font-size: 1.05rem; margin: 0 0 22px; }
 .search { max-width: 520px; padding: 13px 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; max-width: 640px; }
+.chip { background: var(--bg2); color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 0.85rem; font-weight: 500; }
+.chip:hover:not(:disabled) { color: var(--text); filter: none; border-color: var(--lamp); }
+.chip.on { background: var(--lamp); color: #20170a; border-color: var(--lamp); }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; padding-bottom: 40px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
