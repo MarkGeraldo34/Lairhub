@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lairhub-keeper-cron",
+  "main": "src/index.js",
+  "compatibility_date": "2025-06-01",
+
+  // Runs daily at 10:00 UTC. Only needed for the fallback payout: bookings whose guest never
+  // confirmed or disputed within the 24h confirm window.
+  "triggers": { "crons": ["0 10 * * *"] },
+
+  // Calls the main app Worker directly (no public URL needed). Deploy the "lairhub" Worker first.
+  "services": [{ "binding": "LAIRHUB", "service": "lairhub" }],
+
+  "observability": { "enabled": true }
+
+  // Secret (set with: npx wrangler secret put CRON_SECRET) must equal the app Worker's CRON_SECRET.
+}

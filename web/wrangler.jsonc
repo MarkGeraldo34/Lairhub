@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "lairhub",
+  "compatibility_date": "2025-06-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "lairhub"
+    }
+  ],
+  "observability": { "enabled": true }
+
+  // Environment variables:
+  //  - NEXT_PUBLIC_NETWORK and NEXT_PUBLIC_CONTRACT_ADDRESS are public and are baked into the build,
+  //    so set them as *Build variables* (Workers Builds) or in web/.env.production before `npm run deploy`.
+  //  - KEEPER_PRIVATE_KEY and CRON_SECRET are runtime secrets: `npx wrangler secret put <NAME>`.
+  //    Never put secrets in this file.
+}

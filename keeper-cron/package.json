@@ -1,0 +1,11 @@
+{
+  "name": "lairhub-keeper-cron",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev --test-scheduled"
+  },
+  "devDependencies": {
+    "wrangler": "^4.168.0"
+  }
+}

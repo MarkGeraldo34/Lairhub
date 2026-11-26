@@ -1,0 +1,15 @@
+node_modules
+.env
+.env.local
+artifacts
+cache
+typechain-types
+web/.next
+web/next-env.d.ts
+web/*.tsbuildinfo
+.open-next
+.wrangler
+.dev.vars
+web/.open-next
+web/.wrangler
+web/.dev.vars
