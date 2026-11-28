@@ -29,11 +29,12 @@ export default function Home() {
             A bed for tonight.
           </h1>
           <p className="reveal" style={d(180)}>
-            Locals open a spare room for one night. You pay into escrow when you book, and the host is paid only after
-            you confirm the stay happened — so neither side has to trust the other.
+            Book a spare room from any Nigerian local for one night. Your payment is held safely, and the local is paid only after you confirm your stay.
           </p>
           <div className="reveal hero-search" style={d(270)}>
             <LocationSearch value={q} onChange={setQ} />
           </div>
         </div>
       </section>
+
+      <section id="rooms" className="rooms">
