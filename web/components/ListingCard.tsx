@@ -6,9 +6,11 @@ import { formatEther } from "viem";
 import { CONTRACT } from "@/lib/contract";
 import { dateToNight, nightToISO, todayNight, formatNight, shortAddr } from "@/lib/format";
 import type { Listing } from "@/lib/hooks";
+import Gallery from "./Gallery";
 import TxButton from "./TxButton";
+import type { Media } from "@/lib/media";
 
-export default function ListingCard({ listing }: { listing: Listing }) {
+export default function ListingCard({ listing, media }: { listing: Listing; media?: Media | null }) {
   const { address, isConnected } = useAccount();
   const [date, setDate] = useState("");
   const night = dateToNight(date);
@@ -26,12 +28,20 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   return (
     <article className="card listing">
       <div className="glow" aria-hidden />
+      {media && <Gallery media={media} title={listing.title} />}
       <h3>{listing.title}</h3>
       <p className="muted">📍 {listing.area}</p>
       <p className="price">
         {formatEther(listing.price)} <span>QIE / night</span>
       </p>
       <p className="small muted">Host {shortAddr(listing.host)}</p>
+      {media?.houseRules && (
+        <details className="rules">
+          <summary>House rules</summary>
+          <p>{media.houseRules}</p>
+          <p className="muted small">The host&apos;s phone number is shared with you once you book.</p>
+        </details>
+      )}
 
       {listing.active ? (
         <div className="book">
