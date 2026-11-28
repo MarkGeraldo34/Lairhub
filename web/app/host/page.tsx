@@ -4,11 +4,15 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { formatEther, parseEther } from "viem";
 import TxButton from "@/components/TxButton";
+import MediaUploader from "@/components/MediaUploader";
+import TelegramVerify from "@/components/TelegramVerify";
 import PendingBanner from "@/components/PendingBanner";
 import { useBookings, useListings } from "@/lib/hooks";
 import { BOOKED, STATUS } from "@/lib/contract";
 import { formatNight, formatTime, shortAddr } from "@/lib/format";
 import { NIGERIAN_LOCATIONS } from "@/lib/locations";
+import { mediaId } from "@/lib/media";
+import { MAX_RULES, MIN_RULES, cleanRules, normalizePhone } from "@/lib/hostInfo";
 
 function parsePrice(v: string): bigint | null {
   try {
@@ -25,8 +29,12 @@ export default function Host() {
   const { bookings } = useBookings();
   const [title, setTitle] = useState("");
   const [area, setArea] = useState("");
-  const [uri, setUri] = useState("");
+  const [uri, setUri] = useState<string | null>(null);
+  const [mediaKey, setMediaKey] = useState(0);
   const [price, setPrice] = useState("");
+  const [phone, setPhone] = useState("");
+  const [rules, setRules] = useState("");
+  const [tgToken, setTgToken] = useState<string | null>(null);
   const now = Math.floor(Date.now() / 1000);
 
   if (!isConnected) return <p className="muted">Connect your wallet to host guests.</p>;
@@ -35,7 +43,9 @@ export default function Host() {
   const mine = listings.filter((l) => l.host.toLowerCase() === me);
   const incoming = bookings.filter((b) => b.host.toLowerCase() === me).reverse();
   const parsed = parsePrice(price);
-  const formOk = title.trim() && area.trim() && parsed !== null;
+  const phoneOk = normalizePhone(phone);
+  const rulesOk = cleanRules(rules);
+  const formOk = title.trim() && area.trim() && parsed !== null && !!uri;
 
   return (
     <>
@@ -47,7 +57,7 @@ export default function Host() {
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Quiet room near the airport" />
         </label>
         <label>
-          Area <span className="muted small">(neighbourhood only — never your street address)</span>
+          Area
           <input
             value={area}
             onChange={(e) => setArea(e.target.value)}
@@ -66,19 +76,48 @@ export default function Host() {
           <input value={price} onChange={(e) => setPrice(e.target.value)} placeholder="25" inputMode="decimal" />
         </label>
         <label>
-          Details link <span className="muted small">(optional — photos, house rules)</span>
-          <input value={uri} onChange={(e) => setUri(e.target.value)} placeholder="https://…" />
+          Phone number <span className="muted small">(private)</span>
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+234 801 234 5678"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+          />
+          {phone.trim() && !phoneOk && <span className="err small">Enter a valid phone number, e.g. 0801 234 5678, or +CountryCode for other countries.</span>}
         </label>
+        <div className="tgwrap">
+          <TelegramVerify phone={phoneOk ?? ""} onVerified={setTgToken} />
+        </div>
+        <label>
+          House rules
+          <textarea
+            value={rules}
+            onChange={(e) => setRules(e.target.value)}
+            placeholder={"Check-in after 6pm, check-out by 10am.\nNo smoking indoors. Quiet after 10pm."}
+            rows={4}
+            maxLength={MAX_RULES}
+          />
+          {rules.trim() && !rulesOk && (
+            <span className="err small">Please write at least {MIN_RULES} characters.</span>
+          )}
+        </label>
+        <MediaUploader key={mediaKey} rules={rulesOk ?? ""} phone={phoneOk ?? ""} tgToken={tgToken ?? ""} onChange={setUri} />
         <TxButton
           label="Publish listing"
           functionName="createListing"
-          args={[title.trim(), area.trim(), uri.trim(), parsed ?? 0n]}
+          args={[title.trim(), area.trim(), uri ?? "", parsed ?? 0n]}
           disabled={!formOk}
           onDone={() => {
             setTitle("");
             setArea("");
-            setUri("");
+            setUri(null);
+            setMediaKey((k) => k + 1);
             setPrice("");
+            setPhone("");
+            setTgToken(null);
+            setRules("");
           }}
         />
       </div>
@@ -91,7 +130,7 @@ export default function Host() {
             <div>
               <strong>{l.title}</strong>
               <div className="muted small">
-                {l.area} · {formatEther(l.price)} QIE / night · {l.active ? "visible" : "paused"}
+                {l.area} · {formatEther(l.price)} QIE / night · {l.active ? "visible" : "paused"}{!mediaId(l.uri) && " · hidden: no photos/video"}
               </div>
             </div>
             <TxButton
