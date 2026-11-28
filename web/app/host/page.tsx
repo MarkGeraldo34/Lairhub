@@ -53,8 +53,8 @@ export default function Host() {
       <PendingBanner />
       <div className="card form">
         <label>
-          Title
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Quiet room near the airport" />
+          Exact town
+          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Ikeja" />
         </label>
         <label>
           Area
